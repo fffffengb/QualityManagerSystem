@@ -1,0 +1,6 @@
+# Project exclude paths
+/common/target/
+/common_model/target/
+/data/target/
+/fake_data/target/
+/system/target/

@@ -1,0 +1,33 @@
+#服务配置
+server:
+  port: 9999
+#spring配置
+spring:
+  #1.应用配置
+  application:
+    name: en-fake-data #指定服务名
+  #2.数据库连接池
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/em?useUnicode=true&characterEncoding=utf8&useSSL=false
+    username: root
+    password: root
+  #3.JPA
+  jpa:
+    database: MySQL
+    show-sql: false
+    open-in-view: true
+#  redis:
+#    host: 127.0.0.1
+#    port: 6379
+
+logging:
+  level:
+    root: warn
+    com.example.controller: warn
+    com.example.service: warn
+
+base-qm-cfg:
+  stat-num: 5000
+  group_num: 500
+  workshop_num: 10

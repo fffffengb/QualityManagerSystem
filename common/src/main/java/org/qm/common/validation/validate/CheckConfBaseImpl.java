@@ -13,9 +13,11 @@ public class CheckConfBaseImpl implements ConstraintValidator<CheckConfBase, Con
    public boolean isValid(ConfBaseInquire confBase, ConstraintValidatorContext context) {
       String name = confBase.getName();
       String description = confBase.getDescription();
+      String defaultValue = confBase.getDefaultValue();
       StringBuilder errMessage = new StringBuilder("参数名指定错误：");
       if (name == null) errMessage.append("参数name不能为空");
       if (description == null) errMessage.append("参数description不能为空");
+      if (defaultValue == null) errMessage.append("参数defaultValue不能为空");
       context.disableDefaultConstraintViolation();
       context.buildConstraintViolationWithTemplate(errMessage.toString()).addConstraintViolation();
       return name != null && description != null;

@@ -1,8 +1,12 @@
 package org.qm.sys.service;
 
 
+import org.qm.common.dao.configDao.ConfBaseDao;
+import org.qm.common.dao.configDao.ConfUserDao;
 import org.qm.common.exception.NoSuchIdException;
 import org.qm.common.utils.IdWorker;
+import org.qm.domain.conf.ConfBaseInquire;
+import org.qm.domain.conf.ConfUserInquire;
 import org.qm.domain.system.Role;
 import org.qm.domain.system.User;
 import org.qm.sys.dao.RoleDao;
@@ -27,12 +31,16 @@ public class UserService {
     private UserDao userDao;
     private IdWorker idWorker;
     private RoleDao roleDao;
+    private ConfBaseDao confBaseDao;
+    private ConfUserDao confUserDao;
 
     @Autowired
-    public UserService(UserDao userDao, IdWorker idWorker, RoleDao roleDao) {
+    public UserService(UserDao userDao, IdWorker idWorker, RoleDao roleDao, ConfBaseDao confBaseDao, ConfUserDao confUserDao) {
         this.userDao = userDao;
         this.idWorker = idWorker;
         this.roleDao = roleDao;
+        this.confBaseDao = confBaseDao;
+        this.confUserDao = confUserDao;
     }
 
     /**
@@ -41,8 +49,9 @@ public class UserService {
     public void save(User user) {
         //设置主键的值
         String id = idWorker.nextId()+"";
-        user.setPassword("123456");//设置初始密码
         user.setId(id);
+        //初始化用户设置信息
+        initUserConf(id);
         //调用dao保存部门
         userDao.save(user);
     }
@@ -89,7 +98,7 @@ public class UserService {
             public Predicate toPredicate(Root<User> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> list = new ArrayList<>();
                 if(!StringUtils.isEmpty(map.get("username"))) {
-                    list.add(criteriaBuilder.equal(root.get("username").as(String.class),(String)map.get("username")));
+                    list.add(criteriaBuilder.equal(root.get("username").as(String.class),map.get("username")));
                 }
                 int size = list.size();
                 return criteriaBuilder.and(list.toArray(new Predicate[size]));
@@ -129,5 +138,20 @@ public class UserService {
         user.setRoles(roleSet);
         //4.保存用户信息
         userDao.save(user);
+    }
+
+    private void initUserConf(String userId) {
+        //1.查找所有基本设置
+        List<ConfBaseInquire> allBaseConfList = confBaseDao.findAll();
+        //2.初始化ConfUserInquire对象
+        List<ConfUserInquire> allUserConfList = new ArrayList<>();
+        for (ConfBaseInquire b : allBaseConfList) {
+            String id = idWorker.nextId() + "";
+            String value = b.getDefaultValue();
+            String conf_id = b.getId();
+            allUserConfList.add(new ConfUserInquire(id, value, conf_id, userId));
+        }
+        //3.添加所有基本设置
+        confUserDao.saveAll(allUserConfList);
     }
 }

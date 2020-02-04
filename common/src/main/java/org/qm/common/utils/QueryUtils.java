@@ -113,7 +113,7 @@ public class QueryUtils {
         return res;
     }
 
-    private ProfileResult getCurUser() {
+    public ProfileResult getCurUser() {
         Subject subject = SecurityUtils.getSubject();
         //从session中获取之前在userRealm中存储的安全数据ProfileResult
         return (ProfileResult) subject.getPrincipal();

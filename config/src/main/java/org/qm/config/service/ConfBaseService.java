@@ -25,7 +25,7 @@ public class ConfBaseService {
     }
 
     public ConfBaseInquire findById(String id) {
-        if (!confBaseDao.findById(id).isPresent()) throw new NoSuchIdException("没有这个设置：" + id);
+        if (id == null || !confBaseDao.findById(id).isPresent()) throw new NoSuchIdException("没有这个设置：" + id);
         return confBaseDao.findById(id).get();
     }
 

@@ -3,6 +3,7 @@ package org.qm.common.handler;
 
 import org.qm.common.entity.Result;
 import org.qm.common.entity.ResultCode;
+import org.qm.common.exception.ArgValidateException;
 import org.qm.common.exception.CommonException;
 import org.qm.common.exception.NoSuchIdException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -24,7 +25,7 @@ import javax.validation.ConstraintViolationException;
 public class BaseExceptionHandler {
 
     //处理参数验证异常
-    @ExceptionHandler(value = ConstraintViolationException.class)
+    @ExceptionHandler(value = {ConstraintViolationException.class, ArgValidateException.class})
     public Result validateException(HttpServletRequest request, HttpServletResponse response, Exception e) {
 
         return new Result(ResultCode.VALID_ERR, e.getMessage());

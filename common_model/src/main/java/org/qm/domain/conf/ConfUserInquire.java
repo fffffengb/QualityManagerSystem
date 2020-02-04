@@ -1,11 +1,13 @@
 package org.qm.domain.conf;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -15,12 +17,15 @@ import javax.persistence.Table;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @DynamicInsert()
 @DynamicUpdate()
 public class ConfUserInquire {
     @Id
     String id;
     String value;
-    String conf_id;
-    String employee_id;
+    @Column(name = "conf_id")
+    String confId;
+    @Column(name = "employee_id")
+    String employeeId;
 }

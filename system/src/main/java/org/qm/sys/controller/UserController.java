@@ -25,12 +25,12 @@ import java.util.Map;
 @Validated
 //4.设置父路径
 @RequestMapping(value="/sys")
-public class UserControll {
+public class UserController {
 
     private UserService userService;
 
     @Autowired
-    public UserControll(UserService userService) {
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
@@ -57,8 +57,6 @@ public class UserControll {
      */
     @RequestMapping(value = "/user", method = RequestMethod.POST)
     public Result save(@RequestBody User user) {
-        user.setUsername(user.getUsername());
-        user.setPassword(user.getPassword());
         userService.save(user);
         return new Result(ResultCode.SUCCESS);
     }

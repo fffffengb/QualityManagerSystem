@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -22,4 +23,6 @@ public class ConfBaseInquire {
     String id;
     String name;
     String description;
+    @Column(name = "default_value")
+    String defaultValue;
 }

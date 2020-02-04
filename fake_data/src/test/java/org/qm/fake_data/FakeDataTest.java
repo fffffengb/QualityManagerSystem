@@ -47,13 +47,15 @@ public class FakeDataTest {
 
     @Test
     public void seTest() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("2", statAvgDao);
-        Object o = map.get("233");
-        if (o == null) {
-            System.out.println("是null");
+        try{
+            Integer val = Integer.parseInt("sda");
+            System.out.println(val);
+        } catch (Exception e) {
+            System.out.println("sda");
         }
-        System.out.println(o);
+
+        Integer val2 = Integer.parseInt("52246");
+        System.out.println(val2);
     }
 
 }

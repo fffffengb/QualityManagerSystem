@@ -1,4 +1,4 @@
-package org.qm.fake_data.fake_data;
+package org.qm.fake_data;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

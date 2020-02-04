@@ -1,5 +1,6 @@
 package org.qm.domain.data.workshop;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,4 @@
-package org.qm.fake_data.fake_data.other_fake;
+package org.qm.fake_data.other_fake;
 
 import org.qm.common.dao.structureDao.WorkshopGroupDao;
 import org.qm.domain.base.WorkshopGroup;

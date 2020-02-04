@@ -1,10 +1,13 @@
-package org.qm.fake_data.fake_data.main_data_fake;
+package org.qm.fake_data.main_data_fake;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.qm.common.utils.IdWorker;
 import org.qm.domain.data.DataTableBase;
+import org.qm.domain.data.stat.DStatDaily;
 import org.qm.domain.data.stat.DStatOnline;
-import org.qm.fake_data.fake_data.BaseQmCfg;
+import org.qm.domain.data.workshop.DWorkshopAvg;
+import org.qm.domain.data.workshop.DWorkshopDaily;
+import org.qm.fake_data.BaseQmCfg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -67,7 +70,7 @@ public class FakeDataUtils {
             Double work_hourSum = 0d;
             for (int k = i; k < pre + i; k++) {
                 qualitySum += lists.get(k).getQuality();
-                work_hourSum += lists.get(k).getWork_hour();
+                work_hourSum += lists.get(k).getWorkHour();
             }
             Double quality = Double.parseDouble(decimalFormat.format(qualitySum/pre));
             Double work_hour = Double.parseDouble(decimalFormat.format(work_hourSum/pre));
@@ -75,7 +78,7 @@ public class FakeDataUtils {
             map.put(name, j);
             if (j == afterScale) j = 0;
             map.put("quality", quality);
-            map.put("work_hour", work_hour);
+            map.put("workHour", work_hour);
             map.put("time", time);
             res.add(map);
         }
@@ -107,7 +110,7 @@ public class FakeDataUtils {
             map.put("id", idWorker.nextId());
             map.put(name, key);
             map.put("quality", allQualityAvg.get(key));
-            map.put("work_hour", allWorkHourAvg.get(key));
+            map.put("workHour", allWorkHourAvg.get(key));
             map.put("time", new Date());
             res.add(map);
         }
@@ -152,7 +155,7 @@ public class FakeDataUtils {
             List<Double> qualityArray = qualityMap.get(i);
             List<Double> workHourArray = workHourMap.get(i);
             qualityArray.add(dataTableBase.getQuality());
-            workHourArray.add(dataTableBase.getWork_hour());
+            workHourArray.add(dataTableBase.getWorkHour());
             if (++i > scale) i = 1;
         }
         res.add(qualityMap);
@@ -166,4 +169,6 @@ public class FakeDataUtils {
         calendar.add(Calendar.DATE , -1);
         return calendar.getTime();
     }
+
+
 }

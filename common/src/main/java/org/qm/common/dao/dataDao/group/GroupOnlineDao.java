@@ -7,7 +7,5 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
-public interface GroupOnlineDao extends BaseDao<DGroupOnline, String> {
-    Page<DGroupOnline> findAllByGroupIdIn(List<String> ids, Pageable pageable);
-    Page<DGroupOnline> findAllByGroupId(String groupId, Pageable pageable);
+public interface GroupOnlineDao extends BaseGroupDao<DGroupOnline, String> {
 }

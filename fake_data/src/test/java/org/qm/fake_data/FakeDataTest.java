@@ -4,15 +4,20 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.qm.common.dao.dataDao.group.GroupOnlineDao;
 import org.qm.common.dao.dataDao.stat.StatAvgDao;
+import org.qm.common.dao.dataDao.workshop.WorkshopAvgDao;
+import org.qm.common.dao.dataDao.workshop.WorkshopDailyDao;
+import org.qm.common.utils.IdWorker;
 import org.qm.common.utils.QueryUtils;
-import org.qm.fake_data.fake_data.BaseQmCfg;
-import org.qm.fake_data.fake_data.Start;
-import org.qm.fake_data.fake_data.other_fake.FakeBaseTable;
+import org.qm.domain.data.workshop.DWorkshopAvg;
+import org.qm.domain.data.workshop.DWorkshopDaily;
+import org.qm.fake_data.other_fake.FakeBaseTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 
 @RunWith(SpringRunner.class)
@@ -31,6 +36,12 @@ public class FakeDataTest {
     QueryUtils queryUtils;
     @Autowired
     StatAvgDao statAvgDao;
+    @Autowired
+    WorkshopAvgDao workshopAvgDao;
+    @Autowired
+    WorkshopDailyDao workshopDailyDao;
+    @Autowired
+    IdWorker idWorker;
     @Test
     public void t() {
         start.generateOnlineAndAvg();
@@ -38,7 +49,18 @@ public class FakeDataTest {
 
     @Test
     public void foo() {
-        statAvgDao.deleteAll();
+        List<DWorkshopAvg> all = workshopAvgDao.findAll();
+        List<DWorkshopDaily> res = new ArrayList<>();
+        for (DWorkshopAvg raw : all) {
+            String id = idWorker.nextId() + "";
+            String workshopId = raw.getWorkshopId();
+            Date date = raw.getTime();
+            Double quality = raw.getQuality();
+            Double workHour = raw.getWorkHour();
+            DWorkshopDaily target = new DWorkshopDaily(id, workshopId, quality, workHour, date);
+            res.add(target);
+        }
+        workshopDailyDao.saveAll(res);
     }
     @Test
     public void fakeOtherTable() {

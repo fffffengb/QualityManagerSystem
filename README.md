@@ -1,3 +1,8 @@
+## 数据源
+1.表结构在fake_data/src/main/resources/下的em.sql。
+直接导入navicat执行即可。
+2.数据由fake_data随机生成，运行FakeDataApplication即可。
+也可在fake_data包下的Start类中自行设置生成数据的频率。
 ## 踩坑记录
 1.当你在控制台发现报错的地方是一个你已经删除的包，把target删掉即可。
 

@@ -5,6 +5,5 @@ import org.qm.domain.data.group.DGroupAvg;
 
 import java.util.List;
 
-public interface GroupAvgDao extends BaseDao<DGroupAvg, String> {
-    DGroupAvg findAllByGroupIdIn(List<String> ids);
+public interface GroupAvgDao extends BaseGroupDao<DGroupAvg, String> {
 }

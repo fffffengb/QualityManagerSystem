@@ -1,0 +1,23 @@
+#服务配置
+server:
+  port: 9002
+#spring配置
+spring:
+  #1.应用配置
+  application:
+    name: qm-online #指定服务名
+  #2.数据库连接池
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/em?useUnicode=true&characterEncoding=utf8&useSSL=false
+    username: root
+    password: root
+  #3.JPA
+  jpa:
+    database: MySQL
+    show-sql: true
+    open-in-view: true
+  #4.Redis
+  redis:
+    host: 182.92.243.125
+    port: 6379

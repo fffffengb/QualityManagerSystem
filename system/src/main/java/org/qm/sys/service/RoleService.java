@@ -25,36 +25,38 @@ public class RoleService {
         roleDao.save(role);
     }
 
-    public List<String> findAll() {
-        List<String> res = new ArrayList<>();
-        List<Role> allRole = roleDao.findAll();
-        for (Role role : allRole) {
-            res.add(role.getName());
-        }
-        return res;
+    public List<Role> findAll() {
+        return roleDao.findAll();
     }
 
     public void assignPerms(Map<String, Object> map) {
-        Role role;
-        //1.查找要被分配权限的角色
-        if (!roleDao.findById((String)map.get("id")).isPresent())
-            //2.没找到交给Spring统一处理异常
-            throw new NoSuchIdException("没有找到该角色：" + map.get("id"));
-        else{
-            role = roleDao.findById((String)map.get("id")).get();
-            //3.将权限列表拿出来
-            List<String> perms = (List<String>) map.get("permIds");
-            Set<Permission> permissionSet = new HashSet<>();
-            for (String permId : perms) {
-                if (!permDao.findById(permId).isPresent()) throw new NoSuchIdException("没有找到该权限：" + permId);
-                Permission curPerm = permDao.findById(permId).get();
-                permissionSet.add(curPerm);
-            }
-            //4.设置权限
-            role.setPerms(permissionSet);
-            //5.保存角色
-            roleDao.save(role);
-        }
 
+        Role role = findById((String) map.get("id"));
+        //3.将权限列表拿出来
+        List<String> perms = (List<String>) map.get("permIds");
+        Set<Permission> permissionSet = new HashSet<>();
+        for (String permId : perms) {
+            if (!permDao.findById(permId).isPresent()) throw new NoSuchIdException("没有找到该权限：" + permId);
+            Permission curPerm = permDao.findById(permId).get();
+            permissionSet.add(curPerm);
+        }
+        //4.设置权限
+        role.setPerms(permissionSet);
+        //5.保存角色
+        roleDao.save(role);
+
+
+    }
+
+    public Role delete(String id) {
+        Role target = findById(id);
+        roleDao.delete(target);
+        return target;
+    }
+
+    public Role findById(String id) {
+        //没找到交给Spring统一处理异常
+        if (!roleDao.findById(id).isPresent()) throw new NoSuchIdException("没有找到该角色：" + id);
+        return roleDao.findById(id).get();
     }
 }

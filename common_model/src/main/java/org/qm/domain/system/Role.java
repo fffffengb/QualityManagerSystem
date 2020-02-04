@@ -23,14 +23,13 @@ public class Role implements Serializable {
     private String name;
 
     @JsonIgnore
-    @ManyToMany(mappedBy="roles")  //不维护中间表
-    private Set<User> users = new HashSet<User>(0);//角色与用户   多对多
-
+    @ManyToMany(mappedBy="roles")  //避免生成中间表
+    private Set<User> users = new HashSet<>(0);//角色与用户   多对多
 
     @JsonIgnore
     @ManyToMany
     @JoinTable(name="auth_role_permission",
             joinColumns={@JoinColumn(name="role_id", referencedColumnName="id")},
             inverseJoinColumns={@JoinColumn(name="permission_id", referencedColumnName="id")})
-    private Set<Permission> perms= new HashSet<Permission>(0);//角色与模块  多对多
+    private Set<Permission> perms= new HashSet<>(0);//角色与模块  多对多
 }

@@ -17,7 +17,7 @@ import java.util.Map;
 @CrossOrigin
 @RestController
 @Validated
-@RequestMapping(value = "/rp")
+@RequestMapping(value = "/sys/role")
 public class RoleController {
     private RoleService roleService;
     private IdWorker idWorker;
@@ -29,22 +29,34 @@ public class RoleController {
     }
 
     //查询所有角色
-    @RequestMapping(value = "role", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public Result findAll() {
-        List<String> roles = roleService.findAll();
-        return new Result(ResultCode.SUCCESS, roles);
+        return new Result(ResultCode.SUCCESS, roleService.findAll());
+    }
+
+    //查询指定id的角色
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public Result findById(@PathVariable String id) {
+        return new Result(ResultCode.SUCCESS, roleService.findById(id));
     }
 
     //添加角色
-    @RequestMapping(value = "/role", method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     public Result addRole(@RequestBody @CheckRoleArg Role role) {
         role.setId(idWorker.nextId() + "");
         roleService.save(role);
         return new Result(ResultCode.SUCCESS, role);
     }
 
+    //删除角色
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public Result deleteRole(@PathVariable String id) {
+        return new Result(ResultCode.SUCCESS, roleService.delete(id));
+    }
+
+
     //分配权限
-    @RequestMapping(value = "assignPerms", method = RequestMethod.POST)
+    @RequestMapping(value = "/assignPerms", method = RequestMethod.POST)
     public Result assignPerms(@RequestBody @CheckAssignPermArg Map<String, Object> map) {
         roleService.assignPerms(map);
         return new Result(ResultCode.SUCCESS, map);

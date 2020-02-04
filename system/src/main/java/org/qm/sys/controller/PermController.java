@@ -15,7 +15,7 @@ import java.util.Map;
 @CrossOrigin
 @RestController
 @Validated
-@RequestMapping(value = "/rp")
+@RequestMapping(value = "/sys/perm")
 public class PermController {
     private PermService permService;
     private IdWorker idWorker;
@@ -26,18 +26,38 @@ public class PermController {
         this.idWorker = idWorker;
     }
 
-    @RequestMapping(value = "/perm", method = RequestMethod.POST)
+    //查询所有权限
+    @RequestMapping(method = RequestMethod.GET)
+    public Result findAll() {
+        return new Result(ResultCode.SUCCESS, permService.findAll());
+    }
+
+    //根据id查询
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public Result findById(@PathVariable String id) {
+        return new Result(ResultCode.SUCCESS, permService.findById(id));
+    }
+
+   //添加一个新的权限
+    @RequestMapping(method = RequestMethod.POST)
     public Result addPerm(@RequestBody @CheckPermsArg Permission permission) {
         permission.setId(idWorker.nextId() + "");
         permService.save(permission);
         return new Result(ResultCode.SUCCESS, permission);
     }
 
-    @RequestMapping(value = "/perm", method = RequestMethod.PATCH)
+    //修改一个已存在的权限
+    @RequestMapping(method = RequestMethod.PATCH)
     public Result updatePerm(@RequestBody @CheckPermsArg Permission permission) {
         Permission newPermission = permService.update(permission);
         if (newPermission == null) return new Result(ResultCode.FAIL, "未找到此权限");
         return new Result(ResultCode.SUCCESS, newPermission);
     }
 
+    //删除一个权限，如提供的id不存在则向前端返回提示信息
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public Result deletePerm(@PathVariable String id) {
+        Permission permission = permService.delete(id);
+        return new Result(ResultCode.SUCCESS, permission);
+    }
 }

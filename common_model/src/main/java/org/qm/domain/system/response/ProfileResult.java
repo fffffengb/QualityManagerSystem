@@ -5,15 +5,14 @@ import org.qm.domain.system.Role;
 import org.qm.domain.system.User;
 import lombok.Getter;
 import lombok.Setter;
-import org.crazycake.shiro.AuthCachePrincipal;
 
 import java.io.Serializable;
 import java.util.*;
 
 @Setter
 @Getter
-public class ProfileResult implements Serializable, AuthCachePrincipal {
-    private String id;
+public class ProfileResult implements Serializable{
+    private int id;
     private String username;
     private Set<String> strRoles = new HashSet<>();
     private Set<String> strPerms = new HashSet<>();
@@ -32,8 +31,4 @@ public class ProfileResult implements Serializable, AuthCachePrincipal {
         }
     }
 
-    @Override
-    public String getAuthCacheKey() {
-        return null;
-    }
 }

@@ -16,10 +16,4 @@ import javax.persistence.Table;
 @NoArgsConstructor
 public class Group extends BaseTableBase{
 
-//    Integer employee_id;
-//
-//    public Group(String id, String name, Integer employee_id) {
-//        super(id, name);
-//        this.employee_id = employee_id;
-//    }
 }

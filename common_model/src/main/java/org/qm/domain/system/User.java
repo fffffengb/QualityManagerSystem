@@ -16,13 +16,14 @@ import java.util.Set;
 @NoArgsConstructor
 public class User {
     @Id
-    String id;
-    String password;
-    int is_superuser;
+    int id;
     String username;
+    String password;
+    String salt;
+    int is_superuser;
 
     @JsonIgnore
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="auth_user_role",joinColumns={@JoinColumn(name="employee_id",referencedColumnName="id")},
             inverseJoinColumns={@JoinColumn(name="role_id",referencedColumnName="id")}
     )

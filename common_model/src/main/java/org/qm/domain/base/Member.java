@@ -20,7 +20,7 @@ import java.util.Date;
 public class Member {
     @Id
     @Column(name = "id")
-    String Id;
+    int Id;
     String name;
     String sex;
     Date birthday;

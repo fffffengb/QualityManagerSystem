@@ -21,5 +21,5 @@ public class BaseTableBase {
     String id;
     String name;
     @Column(name = "employee_id")
-    String employeeId;
+    int employeeId;
 }

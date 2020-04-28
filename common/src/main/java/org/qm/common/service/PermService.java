@@ -1,8 +1,8 @@
-package org.qm.sys.service;
+package org.qm.common.service;
 
 import org.qm.common.exception.NoSuchIdException;
 import org.qm.domain.system.Permission;
-import org.qm.sys.dao.PermDao;
+import org.qm.common.dao.PermDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

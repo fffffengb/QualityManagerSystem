@@ -1,8 +1,10 @@
 package org.qm.common;
 
+import org.qm.common.utils.IdWorker;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 //1.配置springboot的包扫描
@@ -19,4 +21,8 @@ public class CommonApplication {
         SpringApplication.run(CommonApplication.class,args);
     }
 
+    @Bean
+    public IdWorker idWorker() {
+        return new IdWorker();
+    }
 }

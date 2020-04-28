@@ -1,5 +1,6 @@
-package org.qm.common.shior.realm;
+package org.qm.common.shior;
 
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.qm.domain.system.response.ProfileResult;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -8,11 +9,16 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
-
-import java.util.Set;
+import org.qm.common.dao.UserDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 //公共的realm：获取安全数据，构造权限信息
+@Component
 public class QmRealm extends AuthorizingRealm {
+
+    @Autowired
+    UserDao userDao;
 
     public void setName(String name) {
         super.setName("QmRealm");
@@ -29,8 +35,15 @@ public class QmRealm extends AuthorizingRealm {
         return info;
     }
 
-    //认证方法
+    //登录认证
+    @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
-        return null;
+        ProfileResult profileResult = new ProfileResult(userDao.findByUsername(ShiroUtils.getCurUsername()));
+        if (authenticationToken instanceof JWTUsernamePasswordToken) {  // 仅用于给非登录请求初始化subject
+            JWTUsernamePasswordToken token = (JWTUsernamePasswordToken)authenticationToken;
+            return new SimpleAuthenticationInfo(profileResult, token.getCredentials(), this.getName());
+        } else {  // 登录请求走这里
+            return new SimpleAuthenticationInfo(ShiroUtils.getPrincipal(), ShiroUtils.getCurUser().getPassword(), this.getName());
+        }
     }
 }

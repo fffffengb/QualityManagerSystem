@@ -27,5 +27,5 @@ public class ConfUserInquire {
     @Column(name = "conf_id")
     String confId;
     @Column(name = "employee_id")
-    String employeeId;
+    int employeeId;
 }

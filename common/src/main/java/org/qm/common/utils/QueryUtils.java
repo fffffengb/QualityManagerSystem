@@ -17,6 +17,7 @@ import java.util.Set;
 
 @Component
 public class QueryUtils {
+
     private GroupDao groupDao;
     private WorkshopDao workshopDao;
     private WorkshopGroupDao workshopGroupDao;
@@ -40,7 +41,7 @@ public class QueryUtils {
 
     public List<String> getAllManaged(String managedStructName) {
         ProfileResult curUser = getCurUser();
-        String curEmployeeId = curUser.getId();
+        int curEmployeeId = curUser.getId();
         Set<String> curUserRoles = curUser.getStrRoles();
         List<String> res = new ArrayList<>();
         switch (managedStructName) {
@@ -115,7 +116,7 @@ public class QueryUtils {
 
     public ProfileResult getCurUser() {
         Subject subject = SecurityUtils.getSubject();
-        //从session中获取之前在userRealm中存储的安全数据ProfileResult
+        // 构造安全数据并返回
         return (ProfileResult) subject.getPrincipal();
     }
 

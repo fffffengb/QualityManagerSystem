@@ -1,4 +1,4 @@
-package org.qm.sys.controller;
+package org.qm.common.controller;
 
 import org.qm.common.entity.Result;
 import org.qm.common.entity.ResultCode;
@@ -6,12 +6,11 @@ import org.qm.common.utils.IdWorker;
 import org.qm.common.validation.announce.CheckAssignPermArg;
 import org.qm.common.validation.announce.CheckRoleArg;
 import org.qm.domain.system.Role;
-import org.qm.sys.service.RoleService;
+import org.qm.common.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @CrossOrigin

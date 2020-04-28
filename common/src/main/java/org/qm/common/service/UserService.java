@@ -1,6 +1,12 @@
-package org.qm.sys.service;
+package org.qm.common.service;
 
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.crypto.SecureRandomNumberGenerator;
+import org.apache.shiro.crypto.hash.SimpleHash;
+import org.qm.common.dao.MemberDao;
 import org.qm.common.dao.configDao.ConfBaseDao;
 import org.qm.common.dao.configDao.ConfUserDao;
 import org.qm.common.exception.NoSuchIdException;
@@ -9,8 +15,10 @@ import org.qm.domain.conf.ConfBaseInquire;
 import org.qm.domain.conf.ConfUserInquire;
 import org.qm.domain.system.Role;
 import org.qm.domain.system.User;
-import org.qm.sys.dao.RoleDao;
-import org.qm.sys.dao.UserDao;
+import org.qm.common.dao.RoleDao;
+import org.qm.common.dao.UserDao;
+import org.qm.common.shior.JwtUtils;
+import org.qm.common.shior.ShiroUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,35 +34,70 @@ import java.util.*;
 
 @Service
 public class UserService {
-
-
     private UserDao userDao;
-    private IdWorker idWorker;
+    private MemberDao memberDao;
     private RoleDao roleDao;
     private ConfBaseDao confBaseDao;
     private ConfUserDao confUserDao;
+    private IdWorker idWorker;
 
     @Autowired
-    public UserService(UserDao userDao, IdWorker idWorker, RoleDao roleDao, ConfBaseDao confBaseDao, ConfUserDao confUserDao) {
+    public UserService(UserDao userDao, MemberDao memberDao, RoleDao roleDao, ConfBaseDao confBaseDao, ConfUserDao confUserDao, IdWorker idWorker) {
         this.userDao = userDao;
-        this.idWorker = idWorker;
+        this.memberDao = memberDao;
         this.roleDao = roleDao;
         this.confBaseDao = confBaseDao;
         this.confUserDao = confUserDao;
+        this.idWorker = idWorker;
     }
 
     /**
-     * 1.保存用户
+     * 登录
      */
-    public void save(User user) {
-        //设置主键的值
-        String id = idWorker.nextId()+"";
-        user.setId(id);
-        //初始化用户设置信息
-        initUserConf(id);
-        //调用dao保存部门
-        userDao.save(user);
+    public Map<String, String> login(String username, String password) {
+        User curUser = userDao.findByUsername(username);
+        if (curUser == null)
+            throw new UnknownAccountException("该用户不存在");
+        Map<String, Object> principal = new HashMap<>();
+        principal.put("userId", curUser.getId());
+        principal.put("username", curUser.getUsername());
+        ShiroUtils.setCurUser(curUser);
+        ShiroUtils.setPrincipal(principal);
+        SecurityUtils.getSubject().login(new UsernamePasswordToken(username, encode(password, curUser.getSalt())));
+        // 登陆成功返回昵称和jwtToken, 失败抛出异常统一处理
+        Map<String, String> res = new HashMap<>();
+        res.put("username", curUser.getUsername());
+        res.put("token", JwtUtils.getToken(curUser.getId(), curUser.getUsername()));
+        return res;
     }
+
+    /**
+     * 注册
+     */
+    public Map<String, Object> register(int employeeId, String username, List<String> roleIds, String password) {
+        // 检查公司是否有此员工
+        if(!memberDao.findById(employeeId).isPresent())
+            throw new NoSuchIdException("公司没有此员工");
+        User newUser = new User();
+        newUser.setId(employeeId);
+        newUser.setUsername(username);
+        // 构造一个新的盐用于加密密码
+        String salt = new SecureRandomNumberGenerator().nextBytes().toString();
+        newUser.setPassword(encode(password, salt));
+        newUser.setSalt(salt);
+        newUser.setIs_superuser(0);
+        userDao.save(newUser);
+        newUser = assignRole(employeeId, roleIds);
+        Map<String, Object> res = new HashMap<>();
+        res.put("username", username);
+        res.put("roles", newUser.getRoles());
+        return res;
+    }
+
+    private String encode(String password, String salt) {
+        return new SimpleHash("md5", password, salt, 2).toString();
+    }
+
 
     /**
      * 2.更新用户
@@ -73,7 +116,7 @@ public class UserService {
     /**
      * 3.根据id查询用户
      */
-    public User findById(String id) {
+    public User findById(int id) {
         if (userDao.findById(id).isPresent())
             return userDao.findById(id).get();
         else
@@ -115,19 +158,17 @@ public class UserService {
     /**
      * 5.根据id删除用户
      */
-    public void deleteById(String id) {
+    public void deleteById(int id) {
         userDao.deleteById(id);
     }
 
-    public void assignRole(Map<String, Object> map) {
+    public User assignRole(int id, List<String> roleIds) {
         //1.根据Map中的用户id查找要被分配的用户
         User user;
         Role role;
-        String id = (String) map.get("id");
         if (!userDao.findById(id).isPresent()) throw new NoSuchIdException("没有查找到此用户：" + id);
         user = userDao.findById(id).get();
         //2.构造Role集合
-        List<String> roleIds = (List<String>) map.get("roleIds");
         Set<Role> roleSet = new HashSet<>();
         for (String roleId : roleIds) {
             if (!roleDao.findById(roleId).isPresent()) throw new NoSuchIdException("没有查找到此角色：" + roleId);
@@ -138,9 +179,10 @@ public class UserService {
         user.setRoles(roleSet);
         //4.保存用户信息
         userDao.save(user);
+        return user;
     }
 
-    private void initUserConf(String userId) {
+    private void initUserConf(int userId) {
         //1.查找所有基本设置
         List<ConfBaseInquire> allBaseConfList = confBaseDao.findAll();
         //2.初始化ConfUserInquire对象

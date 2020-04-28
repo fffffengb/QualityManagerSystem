@@ -1,16 +1,14 @@
-package org.qm.sys.controller;
+package org.qm.common.controller;
 
 import org.qm.common.entity.Result;
 import org.qm.common.entity.ResultCode;
 import org.qm.common.utils.IdWorker;
 import org.qm.common.validation.announce.CheckPermsArg;
 import org.qm.domain.system.Permission;
-import org.qm.sys.service.PermService;
+import org.qm.common.service.PermService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @CrossOrigin
 @RestController

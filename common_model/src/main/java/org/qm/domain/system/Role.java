@@ -27,7 +27,7 @@ public class Role implements Serializable {
     private Set<User> users = new HashSet<>(0);//角色与用户   多对多
 
     @JsonIgnore
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="auth_role_permission",
             joinColumns={@JoinColumn(name="role_id", referencedColumnName="id")},
             inverseJoinColumns={@JoinColumn(name="permission_id", referencedColumnName="id")})

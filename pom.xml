@@ -79,11 +79,11 @@
             <artifactId>shiro-core</artifactId>
             <version>1.3.2</version>
         </dependency>
-        <!--shiro与redis整合-->
+        <!--jwt包-->
         <dependency>
-            <groupId>org.crazycake</groupId>
-            <artifactId>shiro-redis</artifactId>
-            <version>3.0.0</version>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>3.10.1</version>
         </dependency>
     </dependencies>
 

@@ -1,4 +1,7 @@
+## 模块图和接口文档在doc文件中
+
 ## 数据源
+
 1.表结构在fake_data/src/main/resources/下的em.sql。
 直接导入navicat执行即可。
 2.数据由fake_data随机生成，运行FakeDataApplication即可。
@@ -17,6 +20,10 @@
 threw exception [Filtered request failed.] with root cause
 出现这个错误是因为没有网，所以redis连接不到。
 
-5.在参数前加了自定义的验证器但没有起作用。在类前面加@Validated就可以了。
 
-6.定义抽象Dao时要加上@NoRepositoryBean注解。
+5. UnknownSessionException: org.crazycake.shiro.exception.SerializationException: serialize error, object=org.apache.shiro.session.mgt.SimpleSession,id=xxx
+这个是因为在UserRealm中返回的安全数据类没有实现序列化接口.
+
+6.在参数前加了自定义的验证器但没有起作用。在类前面加@Validated就可以了。
+
+7.定义抽象Dao时要加上@NoRepositoryBean注解。

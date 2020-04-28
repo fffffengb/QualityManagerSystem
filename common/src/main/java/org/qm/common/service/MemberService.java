@@ -1,8 +1,8 @@
-package org.qm.sys.service;
+package org.qm.common.service;
 
 import org.qm.common.utils.IdWorker;
 import org.qm.domain.base.Member;
-import org.qm.sys.dao.MemberDao;
+import org.qm.common.dao.MemberDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,7 +30,6 @@ public class MemberService {
     }
 
     public Member save(Member member) {
-        member.setId(idWorker.nextId() + "");
         memberDao.save(member);
         return member;
     }
@@ -67,7 +66,7 @@ public class MemberService {
         return memberDao.findAll(spec, PageRequest.of(page-1, size));
     }
 
-    public Member findById(String id) {
+    public Member findById(int id) {
         if (memberDao.findById(id).isPresent())
             return memberDao.findById(id).get();
         return null;
@@ -77,7 +76,7 @@ public class MemberService {
         memberDao.save(member);
     }
 
-    public void deleteById(String id) {
+    public void deleteById(int id) {
         memberDao.deleteById(id);
     }
 }

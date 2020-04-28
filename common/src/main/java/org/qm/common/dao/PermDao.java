@@ -1,4 +1,4 @@
-package org.qm.sys.dao;
+package org.qm.common.dao;
 
 import org.qm.domain.system.Permission;
 import org.springframework.data.jpa.repository.JpaRepository;

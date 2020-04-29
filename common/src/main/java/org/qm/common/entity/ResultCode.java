@@ -12,13 +12,11 @@ package org.qm.common.entity;
 public enum ResultCode {
 
     SUCCESS(true,10000,"操作成功！"),
-    //---系统错误返回码-----
-    FAIL(false,10001,"操作失败"),
-    UNAUTHENTICATED(false,10002,"您还未登录"),
-    UNAUTHORISE(false,10003,"权限不足"),
+    FAIL(false,20001,"操作失败"),
+    UNAUTHENTICATED(false,20002,"您还未登录"),
+    UNAUTHORISE(false,20003,"权限不足"),
     SERVER_ERROR(false,99999,"抱歉，系统繁忙，请稍后重试！"),
-    //---用户操作返回码  2xxxx----
-    USERNAMEORPASSWORD(false, 20004, "用户名或密码错误"),
+    USERNAMEORPASSWORD_ERROR(false, 20004, "用户名或密码错误"),
     //---企业操作返回码  3xxxx----
     //---权限操作返回码----
     VALID_ERR(false, 40001, "参数验证错误"),

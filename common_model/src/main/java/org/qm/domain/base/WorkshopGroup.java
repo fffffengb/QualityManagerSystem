@@ -16,7 +16,7 @@ import javax.persistence.Table;
 @NoArgsConstructor
 public class WorkshopGroup {
     @Id
-    int id;
+    String id;
     @Column(name = "workshop_id")
     String workshopId;
     @Column(name = "group_id")

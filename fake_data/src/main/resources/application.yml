@@ -17,17 +17,12 @@ spring:
     database: MySQL
     show-sql: false
     open-in-view: true
-#  redis:
-#    host: 127.0.0.1
-#    port: 6379
-
-logging:
-  level:
-    root: warn
-    com.example.controller: warn
-    com.example.service: warn
 
 base-qm-cfg:
   stat-num: 5000
   group_num: 500
   workshop_num: 10
+
+global:
+  user:
+    time: 604800

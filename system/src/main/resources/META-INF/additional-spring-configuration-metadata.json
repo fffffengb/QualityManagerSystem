@@ -1,8 +1,0 @@
-{
-  "properties": [
-    {
-      "name": "global.user.time-out",
-      "type": "java.lang.String",
-      "description": "Description for global.user.time-out."
-  }
-] }

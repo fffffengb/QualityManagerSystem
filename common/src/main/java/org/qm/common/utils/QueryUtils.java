@@ -1,6 +1,8 @@
 package org.qm.common.utils;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.AuthorizationException;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.subject.Subject;
 import org.qm.common.dao.structureDao.GroupDao;
 import org.qm.common.dao.structureDao.GroupStatMemberDao;
@@ -93,7 +95,7 @@ public class QueryUtils {
                     return res;
                 }
             default:
-                throw new RuntimeException("当前用户没有身份4/3/2");
+                throw new UnauthorizedException("当前用户没有身份4/3/2");
         }
 
     }

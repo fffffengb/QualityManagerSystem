@@ -10,7 +10,6 @@
         <module name="common_model" />
         <module name="data" />
         <module name="common" />
-        <module name="system" />
         <module name="RoleAndPerm" />
         <module name="config" />
         <module name="fake_data" />
@@ -19,6 +18,7 @@
     <bytecodeTargetLevel>
       <module name="avg_data" target="1.8" />
       <module name="RoleAndPerm" target="1.8" />
+      <module name="system" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

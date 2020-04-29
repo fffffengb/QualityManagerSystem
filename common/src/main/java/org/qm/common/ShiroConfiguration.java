@@ -1,13 +1,16 @@
 package org.qm.common;
 
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.qm.common.shior.JWTFilter;
 import org.qm.common.shior.QmRealm;
+import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 
 import javax.servlet.Filter;
 import java.util.LinkedHashMap;
@@ -36,10 +39,10 @@ public class ShiroConfiguration {
         filterFactory.setLoginUrl("/authError?code=1");//跳转url地址
         filterFactory.setUnauthorizedUrl("/authError?code=2");//未授权的url
         LinkedHashMap<String, Filter> filtersMap = new LinkedHashMap<>();
-        //用来校验token
+        // 用来校验token
         filtersMap.put("jwtAuth", new JWTFilter());
         filterFactory.setFilters(filtersMap);
-        //4.设置过滤器集合
+        // 设置过滤器集合
         Map<String,String> filterMap = new LinkedHashMap<>();
         filterMap.put("/sys/**","noSessionCreation, anon");
         filterMap.put("/authError","noSessionCreation, anon");
@@ -48,11 +51,4 @@ public class ShiroConfiguration {
         return filterFactory;
     }
 
-    //开启对shiro注解的支持
-    @Bean
-    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager) {
-        AuthorizationAttributeSourceAdvisor advisor = new AuthorizationAttributeSourceAdvisor();
-        advisor.setSecurityManager(securityManager);
-        return advisor;
-    }
 }

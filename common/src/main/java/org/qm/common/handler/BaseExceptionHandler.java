@@ -1,6 +1,10 @@
 package org.qm.common.handler;
 
 
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authz.AuthorizationException;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.qm.common.entity.Result;
 import org.qm.common.entity.ResultCode;
 import org.qm.common.exception.ArgValidateException;
@@ -37,11 +41,18 @@ public class BaseExceptionHandler {
         return new Result(ResultCode.ARG_ERR, e.getMessage());
     }
 
+    // 处理登录验证异常
+    @ExceptionHandler(value = { IncorrectCredentialsException.class, UnknownAccountException.class })
+    public Result incorrectCredentialsException(HttpServletRequest request, HttpServletResponse response, Exception e) {
+        return new Result(ResultCode.USERNAMEORPASSWORD_ERROR, e.getMessage());
+    }
+
     //处理认证异常
-    @ExceptionHandler(value = org.apache.shiro.authz.UnauthorizedException.class)
+    @ExceptionHandler(value = { UnauthorizedException.class })
     public Result unauthorizedException(HttpServletRequest request, HttpServletResponse response, Exception e) {
         return new Result(ResultCode.UNAUTHORISE, e.getMessage());
     }
+
 
     //处理未找到Id异常
     @ExceptionHandler(value = NoSuchIdException.class)

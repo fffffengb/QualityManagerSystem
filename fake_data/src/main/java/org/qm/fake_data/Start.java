@@ -77,18 +77,16 @@ public class Start {
         statAvgDao.deleteAll();
         statAvgDao.saveAll(statAvgList);
 
-
         //根据工位online计算大组online数据。
         List<DGroupOnline> groupOnlineList =
                 fakeDataUtils.getNextLevelOnlineData(statOnlineList, baseQmCfg.stat_num,
                         baseQmCfg.group_num, "groupId", DGroupOnline.class);
         groupOnlineDao.saveAll(groupOnlineList);
-        //计算。。。
+        //计算大组平均数据
         List<DGroupAvg> groupAvgList = fakeDataUtils.getAvg(groupOnlineDao.findByTimeAfter(yesterday), "groupId",
                 baseQmCfg.group_num, DGroupAvg.class);
         groupAvgDao.deleteAll();
         groupAvgDao.saveAll(groupAvgList);
-
 
         //根据大组online计算车间online数据。
         List<DWorkshopOnline> workshopOnlineList =
@@ -99,11 +97,11 @@ public class Start {
                 baseQmCfg.workshop_num, DWorkshopAvg.class);
         workshopAvgDao.deleteAll();
         workshopAvgDao.saveAll(workshopAvgList);
-        //根据车间online计算生产部online数据。
+
     }
 
     //每天23：55插入daily数据
-    @Scheduled(cron = "0 25,26 19 * * ?")
+    @Scheduled(cron = "0/10 * * * * ?")
     public void generateDaily() {
         generateStatDaily();
         generateGroupDaily();

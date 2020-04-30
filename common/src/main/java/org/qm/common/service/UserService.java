@@ -4,13 +4,16 @@ package org.qm.common.service;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.qm.common.dao.MemberDao;
 import org.qm.common.dao.configDao.ConfBaseDao;
 import org.qm.common.dao.configDao.ConfUserDao;
+import org.qm.common.entity.UserResult;
 import org.qm.common.exception.NoSuchIdException;
 import org.qm.common.utils.IdWorker;
+import org.qm.domain.base.Member;
 import org.qm.domain.conf.ConfBaseInquire;
 import org.qm.domain.conf.ConfUserInquire;
 import org.qm.domain.system.Role;
@@ -21,7 +24,9 @@ import org.qm.common.shior.JwtUtils;
 import org.qm.common.shior.ShiroUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -132,24 +137,60 @@ public class UserService {
      *
      */
 
-    public Page<User> findAll(Map<String,Object> map,int page, int size) {
-        //1.需要查询条件
-        Specification<User> spec = new Specification<User>() {
-            /**
-             * 动态拼接查询条件
-             */
-            public Predicate toPredicate(Root<User> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                List<Predicate> list = new ArrayList<>();
-                if(!StringUtils.isEmpty(map.get("username"))) {
-                    list.add(criteriaBuilder.equal(root.get("username").as(String.class),map.get("username")));
-                }
-                int size = list.size();
-                return criteriaBuilder.and(list.toArray(new Predicate[size]));
+    public Page<UserResult> findAll(Integer userId, String username, int page, int size) {
+        //构造查询条件
+        Specification<User> spec = (Specification<User>) (root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (userId != null) {
+                predicates.add(criteriaBuilder.equal(root.get("id"), userId));
             }
+            if (username != null) {
+                predicates.add(criteriaBuilder.equal(root.get("username"), username));
+            }
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
         };
+        //获得用户数据
+        List<User> users = userDao.findAll(spec);
+        //构造需要的数据
+        List<UserResult> userResults = getUserResult(users);
+        //分页
+        return listConvertToPage(userResults, PageRequest.of(page-1, size));
+    }
 
-        //2.分页
-        return userDao.findAll(spec, PageRequest.of(page-1, size));
+    private List<UserResult> getUserResult(List<User> users) {
+        //根据用户id查找员工信息
+        List<Integer> ids = new ArrayList<>();
+        List<UserResult> results = new ArrayList<>();
+        Map<String, String> roleMap = getRoleMap();
+        //构造结果集
+        for (User user : users) {
+            UserResult userResult = new UserResult(user);
+            Member member = memberDao.findById(user.getId()).get();
+            userResult.setName(member.getName());
+            Set<Role> roleSet = user.getRoles();
+            List<String> roleNames = new ArrayList<>();
+            for (Role role : roleSet) {
+                roleNames.add(roleMap.get(role.getName()));
+            }
+            userResult.setRoleNames(roleNames);
+            results.add(userResult);
+        }
+        return results;
+    }
+
+    private Map<String, String> getRoleMap() {
+        Map<String, String> map = new HashMap<>();
+        map.put("group", "大组长");
+        map.put("workshop", "经理");
+        map.put("dpt", "总经理");
+        map.put("hr", "人事经理");
+        return map;
+    }
+
+    public <T> Page<T> listConvertToPage(List<T> list, Pageable pageable) {
+        int start = (int)pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), list.size());
+        return new PageImpl<T>(list.subList(start, end), pageable, list.size());
     }
 
     public User findByUsername(String username) {
@@ -195,5 +236,9 @@ public class UserService {
         }
         //3.添加所有基本设置
         confUserDao.saveAll(allUserConfList);
+    }
+
+    public Integer deleteByUsername(String username) {
+        return userDao.deleteByUsername(username);
     }
 }

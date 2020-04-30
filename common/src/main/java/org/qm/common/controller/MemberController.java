@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Map;
 
@@ -48,10 +49,9 @@ public class MemberController {
      * 模糊查询
      */
     @RequiresPermissions(value = {"CRUDMember"})
-    @RequestMapping(value = "/member", method = RequestMethod.GET)
-    public Result findAll(@NotNull Integer page, @NotNull Integer size, @RequestParam Map<String, Object> map) {
+    @RequestMapping(value = "/member/{page}/{size}", method = RequestMethod.POST)
+    public Result findAll(@PathVariable @Min(value = 1) int page, @PathVariable @Min(value = 1) int size, @RequestBody Map<String, Object> map) {
         Page<Member> pageUser = memberService.findAll(map, page, size);
-
         //3.构造返回结果
         PageResult<Member> pageResult = new PageResult<>(pageUser.getTotalElements(),pageUser.getContent());
         return new Result(ResultCode.SUCCESS, pageResult);

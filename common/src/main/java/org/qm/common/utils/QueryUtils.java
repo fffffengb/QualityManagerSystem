@@ -95,7 +95,7 @@ public class QueryUtils {
                     return res;
                 }
             default:
-                throw new UnauthorizedException("当前用户没有身份4/3/2");
+                throw new UnauthorizedException("您没有该查询权限");
         }
 
     }

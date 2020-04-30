@@ -4,10 +4,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.qm.common.dao.dataDao.group.GroupOnlineDao;
 import org.qm.common.dao.dataDao.stat.StatAvgDao;
+import org.qm.common.dao.dataDao.stat.StatDailyDao;
 import org.qm.common.dao.dataDao.workshop.WorkshopAvgDao;
 import org.qm.common.dao.dataDao.workshop.WorkshopDailyDao;
 import org.qm.common.utils.IdWorker;
 import org.qm.common.utils.QueryUtils;
+import org.qm.domain.data.stat.DStatAvg;
+import org.qm.domain.data.stat.DStatDaily;
 import org.qm.domain.data.workshop.DWorkshopAvg;
 import org.qm.domain.data.workshop.DWorkshopDaily;
 import org.qm.fake_data.other_fake.FakeBaseTable;
@@ -15,9 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 
 @RunWith(SpringRunner.class)
@@ -42,9 +43,30 @@ public class FakeDataTest {
     WorkshopDailyDao workshopDailyDao;
     @Autowired
     IdWorker idWorker;
+    @Autowired
+    StatDailyDao statDailyDao;
     @Test
     public void t() {
-        start.generateOnlineAndAvg();
+        for (int i = 0; i < 10; i++) {
+            //查找当前时间点avg表中的数据
+            List<DStatAvg> allStatAvg = statAvgDao.findAll();
+            //构造daily数据
+            List<DStatDaily> res = new ArrayList<>();
+            for (DStatAvg raw : allStatAvg) {
+                String id = idWorker.nextId() + "";
+                String workshopId = raw.getStatId();
+                Date date = new Date(); //取时间
+                Calendar calendar = new GregorianCalendar();
+                calendar.setTime(date);
+                calendar.add(calendar.DATE,i); //把日期往后增加一天,整数  往后推,负数往前移动
+                date = calendar.getTime(); //这个时间就是日期往后推一天的结果
+                Double quality = raw.getQuality();
+                Double workHour = raw.getWorkHour();
+                DStatDaily target = new DStatDaily(id, workshopId, quality, workHour, date);
+                res.add(target);
+            }
+            statDailyDao.saveAll(res);
+        }
     }
 
     @Test
@@ -61,23 +83,6 @@ public class FakeDataTest {
             res.add(target);
         }
         workshopDailyDao.saveAll(res);
-    }
-    @Test
-    public void fakeOtherTable() {
-        fakeBaseTable.fakeWorkshopGroup(10, 50);
-    }
-
-    @Test
-    public void seTest() {
-        try{
-            Integer val = Integer.parseInt("sda");
-            System.out.println(val);
-        } catch (Exception e) {
-            System.out.println("sda");
-        }
-
-        Integer val2 = Integer.parseInt("52246");
-        System.out.println(val2);
     }
 
 }
